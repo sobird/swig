@@ -18,6 +18,7 @@
   },
   "author": "Paul Armstrong <paul@paularmstrongdesigns.com>",
   "dependencies": {
+    "commander": "^5.1.0",
     "optimist": "~0.6",
     "uglify-js": "^3.9.4"
   },

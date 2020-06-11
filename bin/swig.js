@@ -8,7 +8,49 @@ var swig = require('../index'),
   filters = require('../lib/filters'),
   utils = require('../lib/utils'),
   uglify = require('uglify-js');
+const package = require('../package');
+const { program } = require('commander');
 
+// program.name(package.name)
+//   .version(package.version)
+//   .description(package.description)
+//   .usage("<command>");
+
+// // swig compile
+// program.command('compile <file> [options]')
+//   .description('compile a source file into a renderable template function')
+//   .option("-s, --setup_mode [mode]", "Which setup mode to use")
+//   .action(function(file, options) {
+//     var out = swig.compileFile(file);
+
+//     console.log(out({}));
+//   });
+
+// program.command('run <files> [options]')
+//   .description("run a pre-compiled template function")
+//   .action((files, destination) => {
+//     console.log(files);
+
+//     swig.compileFile();
+//   });
+
+// program
+//   .command('exec <cmd>')
+//   .alias('ex')
+//   .description('execute the given remote cmd')
+//   .option("-e, --exec_mode <mode>", "Which exec mode to use")
+//   .action(function (cmd, options) {
+//     console.log(options);
+//   }).on('--help', function () {
+//     console.log('');
+//     console.log('Examples:');
+//     console.log('');
+//     console.log('  $ deploy exec sequential');
+//     console.log('  $ deploy exec async');
+//   });
+
+// program.parse(process.argv);
+// return;
 var command,
   wrapstart = 'var tpl = ',
   argv = optimist
@@ -16,7 +58,7 @@ var command,
       '    $0 compile [files] [options]\n' +
       '    $0 run [files] [options]\n' +
       '    $0 render [files] [options]\n'
-      )
+    )
     .describe({
       v: 'Show the Swig version number.',
       o: 'Output location.',
@@ -68,7 +110,7 @@ var command,
   out = function (file, str) {
     console.log(str);
   },
-  efn = function () {},
+  efn = function () { },
   anonymous,
   files,
   fn;
@@ -125,35 +167,35 @@ if (argv.options) {
 }
 
 switch (command) {
-case 'compile':
-  fn = function (file, str) {
-    var r = swig.precompile(str, { filename: file, locals: ctx }).tpl.toString().replace('anonymous', '');
+  case 'compile':
+    fn = function (file, str) {
+      var r = swig.precompile(str, { filename: file, locals: ctx }).tpl.toString().replace('anonymous', '');
 
-    r = argv['wrap-start'] + r + argv['wrap-end'];
+      r = argv['wrap-start'] + r + argv['wrap-end'];
 
-    if (argv.m) {
-      r = uglify.minify(r, { fromString: true }).code;
-    }
+      if (argv.m) {
+        r = uglify.minify(r, { fromString: true }).code;
+      }
 
-    out(file, r);
-  };
-  break;
+      out(file, r);
+    };
+    break;
 
-case 'run':
-  fn = function (file, str) {
-    (function () {
-      eval(str);
-      var __tpl = eval(argv['method-name']);
-      out(file, __tpl(swig, ctx, filters, utils, efn));
-    }());
-  };
-  break;
+  case 'run':
+    fn = function (file, str) {
+      (function () {
+        eval(str);
+        var __tpl = eval(argv['method-name']);
+        out(file, __tpl(swig, ctx, filters, utils, efn));
+      }());
+    };
+    break;
 
-case 'render':
-  fn = function (file, str) {
-    out(file, swig.render(str, { filename: file, locals: ctx }));
-  };
-  break;
+  case 'render':
+    fn = function (file, str) {
+      out(file, swig.render(str, { filename: file, locals: ctx }));
+    };
+    break;
 }
 
 argv._.forEach(function (file) {
