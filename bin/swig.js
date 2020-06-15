@@ -9,22 +9,76 @@ var swig = require('../index'),
   utils = require('../lib/utils'),
   uglify = require('uglify-js');
 const package = require('../package');
-const { program } = require('commander');
 
-// program.name(package.name)
-//   .version(package.version)
-//   .description(package.description)
-//   .usage("<command>");
+// commander
+const { Command } = require('commander');
+const program = new Command();
+
+program.name(package.name)
+  .version(package.version)
+  .description(package.description)
+  .usage("<command> <files> [options]");
+
+program
+  .command('compile <files>')
+  .description('compile a source file into a renderable template function')
+  .option("-j, --json [.json]", "Which setup mode to use")
+  .action(function(env, options){
+    //const { args } = options;
+
+    console.log(options.json);
+    
+  });
+
+  program
+  .command('render <files>')
+  .description('compile a source file into a renderable template function')
+  .option("-s, --setup_mode [mode]", "Which setup mode to use")
+  .action(function(env, options){
+    const { args } = options;
+
+    console.log(args);
+    const mode = options.setup_mode || "normal";
+    env = env || 'all';
+    console.log('setup for %s env(s) with %s mode', env, mode);
+  });
+
+  program
+  .command('run <files>')
+  .description('run a pre-compiled template function')
+  .option("-s, --setup_mode [mode]", "Which setup mode to use")
+  .action(function(env, options){
+    const { args } = options;
+
+    console.log(args);
+    const mode = options.setup_mode || "normal";
+    env = env || 'all';
+    console.log('setup for %s env(s) with %s mode', env, mode);
+  });
+
+program
+ .option('-o, --output', 'Output location. [default: "stdout"]')
+ //.option('-j, --json', 'Variable context as a JSON file')
+ .option('-c, --context', 'Variable context as a CommonJS-style file. Used only if option `j` is not provided')
+ .option('-m, --minify', 'Minify compiled functions with uglify-js')
+ .option('--filters', 'Custom filters as a CommonJS-style file')
+ .option('--tags', 'Custom tags as a CommonJS-style file')
+ .option('--options', 'Customize Swig\'s Options from a CommonJS-style file')
+ .option('--wrap-start ', 'Template wrapper beginning for "compile". [default: "var tpl = "]')
+ .option('--wrap-end', 'Template wrapper end for "compile". [default: ";"]')
+ .option('--method-name', 'Method name to set template to and run from. [default: "tpl"]');
+
+
+program.parse(process.argv);
+
+if (!program.args.length) {
+  program.help();
+}
+return;
+
 
 // // swig compile
-// program.command('compile <file> [options]')
-//   .description('compile a source file into a renderable template function')
-//   .option("-s, --setup_mode [mode]", "Which setup mode to use")
-//   .action(function(file, options) {
-//     var out = swig.compileFile(file);
 
-//     console.log(out({}));
-//   });
 
 // program.command('run <files> [options]')
 //   .description("run a pre-compiled template function")
@@ -192,7 +246,9 @@ switch (command) {
     break;
 
   case 'render':
+    
     fn = function (file, str) {
+      console.log(file);
       out(file, swig.render(str, { filename: file, locals: ctx }));
     };
     break;
