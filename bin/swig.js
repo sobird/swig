@@ -14,7 +14,7 @@ swig.loader = swig.loaders.fs();
 const package = require('../package');
 
 // commander
-const { Command, action, arguments } = require('commander');
+const { Command } = require('commander');
 const program = new Command();
 
 /**
