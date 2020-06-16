@@ -41,9 +41,9 @@ var casefiles = fs.readdirSync(casedir),
   }),
   keys = _.keys(cases);
 
-describe('bin/swig -v', function () {
+describe('bin/swig -V', function () {
   it('shows the version number', function (done) {
-    exec('node ' + bin + ' -v', function (err, stdout, stderr) {
+    exec('node ' + bin + ' -V', function (err, stdout, stderr) {
       expect((/^\d+\.\d+\.\d+/).test(stdout)).to.equal(true);
       done();
     });
