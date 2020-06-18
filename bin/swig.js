@@ -26,8 +26,7 @@ const program = new Command();
 function stdout(file, res) {
   const { output } = program;
   if (output) {
-    mkdirp(output);
-
+    mkdirp.sync(output);
     fs.writeFileSync(path.resolve(output, file), res, { flags: 'w' });
   } else {
     console.log(res);
@@ -45,7 +44,6 @@ function stdctx() {
   } else if (context) {
     ctx = require(path.resolve(context));
   }
-
   return ctx;
 }
 
@@ -99,9 +97,13 @@ program
     setTag();
 
     files.forEach(file => {
-      const { wrapStart, wrapEnd, minify } = program;
+      let { wrapStart, methodName, wrapEnd, minify, options } = program;
 
-      var r = swig.precompile(swig.loader.load(file), { filename: file, locals: stdctx() }).tpl.toString().replace('anonymous', '');
+      if(methodName && wrapStart == 'var tpl = ') {
+        wrapStart = 'var ' + methodName + ' = ';
+      }
+
+      var r = swig.precompile(swig.loader.load(file), { filename: file, locals: stdctx() }).tpl.toString().replace('anonymous', '').replace(/\n/g, '');
       r = wrapStart + r + wrapEnd;
 
       if (minify) {
