@@ -17,7 +17,7 @@ function makeDate(tzOffset, y, m, d, h, i, s) {
 
 var n = new Swig(),
   oDefaults = n.options,
-  d = makeDate(420, 2011, 8, 6, 9, 5, 2),
+  d = makeDate(-480, 2011, 8, 6, 9, 5, 2),
   cases = {
     addslashes: [
       {

@@ -149,4 +149,3 @@ describe('bin/swig custom options', function () {
     });
   });
 });
-return;

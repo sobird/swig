@@ -35,6 +35,7 @@ browser/comments.js: FORCE
 	dist/swig.js
 
 .INTERMEDIATE browser/test/tests.js: \
+	tests/bin/bin.test.js \
 	tests/comments.test.js \
 	tests/filters.test.js \
 	tests/tags.test.js \
